@@ -5,9 +5,9 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import "./App.css";
-import FormControl from '@material-ui/core/FormControl';
+import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
-import InputLabel from '@material-ui/core/InputLabel';
+import InputLabel from "@material-ui/core/InputLabel";
 
 class App extends Component {
   constructor(props) {
@@ -88,30 +88,39 @@ class App extends Component {
       .map(p => ({
         ...p,
         variants: p.variants.filter(
-          v => v.stock.filter(s => s && s.size.toUpperCase() === this.state.filterBySize && s.inStock).length
+          v =>
+            v.stock.filter(
+              s =>
+                s &&
+                s.size.toUpperCase() === this.state.filterBySize &&
+                s.inStock
+            ).length
         )
       }))
       .filter(p => p.variants.length);
   }
 
   countVariants(products) {
-    return products.reduce((acc, p) => acc + p.variants.length, 0)
+    return products.reduce((acc, p) => acc + p.variants.length, 0);
   }
 
   render() {
-    const filtered = this.filterBySize(this.state.products);
+    const productsFiltered = this.filterBySize(this.state.products);
+
     return (
       <div className="App">
         <FormControl>
-          <InputLabel htmlFor="filterBySize">Size</InputLabel>
+          <InputLabel htmlFor="filterBySize">Filter by Size</InputLabel>
           <Input
-          onChange={e => this.setState({ filterBySize: e.target.value.toUpperCase() })}
-          value={this.state.filterBySize}
+            onChange={e =>
+              this.setState({ filterBySize: e.target.value.toUpperCase() })
+            }
+            value={this.state.filterBySize}
           />
         </FormControl>
-        
-          Showing {this.countVariants(filtered)} of {this.countVariants(this.state.products)}
-        {filtered.map(this.renderProduct.bind(this))}
+        Showing {productsFiltered.length} of {this.state.products.length} products
+        with {this.countVariants(productsFiltered)} of {this.countVariants(this.state.products)} variants
+        {productsFiltered.map(this.renderProduct.bind(this))}
       </div>
     );
   }
