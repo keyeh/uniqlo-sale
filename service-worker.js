@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/uniqlo-sale/precache-manifest.3473398fdfa460dc2217f5103f2a0293.js"
+  "/uniqlo-sale/precache-manifest.8329db00d499e36e13abf29ce549abbd.js"
 );
 
 workbox.clientsClaim();
