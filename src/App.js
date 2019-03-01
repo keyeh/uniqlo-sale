@@ -5,6 +5,9 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import "./App.css";
+import FormControl from '@material-ui/core/FormControl';
+import Input from "@material-ui/core/Input";
+import InputLabel from '@material-ui/core/InputLabel';
 
 class App extends Component {
   constructor(props) {
@@ -29,44 +32,48 @@ class App extends Component {
   }
   renderVariants(variant) {
     return (
-      <Grid item sm={3} md={2} lg={1}>
+      <Grid item sm={3} md={2} lg={2}>
         <a href={variant.url} target="_blank" rel="noopener noreferrer">
-        <Card
-          style={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
-          <img
-            style={{ width: "100%" }}
-            src={variant.thumbnail}
-            alt={variant.name}
-          />
-          <CardContent style={{ flexGrow: 1 }}>
-            <Typography>
-              {variant.name}
-            </Typography>
-            <Typography>
-              {variant.stock.map(s => (s && s.inStock && <span>{s.size} &bull; </span>))}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            {}
-          </CardActions>
-        </Card>
+          <Card
+            style={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            <img
+              style={{ width: "100%" }}
+              src={variant.thumbnail}
+              alt={variant.name}
+            />
+            <CardContent style={{ flexGrow: 1 }}>
+              <Typography>{variant.name}</Typography>
+              <Typography>
+                {variant.stock.map(
+                  s => s && s.inStock && <span>{s.size} &bull; </span>
+                )}
+              </Typography>
+            </CardContent>
+            <CardActions>{}</CardActions>
+          </Card>
         </a>
       </Grid>
     );
   }
 
   renderProduct(product) {
-    const {title,originalPrice, salePrice, variants} = product;
-    const percentDiscount = (Number(originalPrice.replace('$', '')) - Number(salePrice.replace('$', ''))) / Number(originalPrice.replace('$', '')) * 100;
+    const { title, originalPrice, salePrice, variants } = product;
+    const percentDiscount =
+      ((Number(originalPrice.replace("$", "")) -
+        Number(salePrice.replace("$", ""))) /
+        Number(originalPrice.replace("$", ""))) *
+      100;
     return (
       <div>
         <h2>{title}</h2>
-        <h3><s>{originalPrice}</s> {salePrice} ({Math.round(-percentDiscount)}%)</h3>
+        <h3>
+          <s>{originalPrice}</s> {salePrice} ({Math.round(-percentDiscount)}%)
+        </h3>
         <Grid container spacing={16}>
           {variants.map(this.renderVariants)}
         </Grid>
@@ -74,23 +81,38 @@ class App extends Component {
     );
   }
 
-  filterBySize(size) {
-    if (!size) return this.state.products;
+  filterBySize(products) {
+    if (!this.state.filterBySize) return products;
 
-    return this.state.products
+    return products
       .map(p => ({
         ...p,
         variants: p.variants.filter(
-          v => v.stock.filter(s => s && s.size === "S" && s.inStock).length
+          v => v.stock.filter(s => s && s.size.toUpperCase() === this.state.filterBySize && s.inStock).length
         )
       }))
       .filter(p => p.variants.length);
   }
 
+  countVariants(products) {
+    return products.reduce((acc, p) => acc + p.variants.length, 0)
+  }
+
   render() {
-    const filtered = this.filterBySize(this.state.filterBySize);
+    const filtered = this.filterBySize(this.state.products);
     return (
-      <div className="App">{filtered.map(this.renderProduct.bind(this))}</div>
+      <div className="App">
+        <FormControl>
+          <InputLabel htmlFor="filterBySize">Size</InputLabel>
+          <Input
+          onChange={e => this.setState({ filterBySize: e.target.value.toUpperCase() })}
+          value={this.state.filterBySize}
+          />
+        </FormControl>
+        
+          Showing {this.countVariants(filtered)} of {this.countVariants(this.state.products)}
+        {filtered.map(this.renderProduct.bind(this))}
+      </div>
     );
   }
 }
